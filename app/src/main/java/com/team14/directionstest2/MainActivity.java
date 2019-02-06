@@ -8,8 +8,10 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import com.google.maps.GeoApiContext;
 import com.akexorcist.googledirection.DirectionCallback;
@@ -64,12 +66,16 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     private TextView view3;
     private TextView view4;
     private TextView view5;
+    private EditText Input1;
+    private EditText Input2;
     private String[] stockArr;
     ArrayList<LatLng> directionPosList;
     private GeoApiContext mContext;
     private Button but1;
     private Button but2;
     private Button but3;
+    private Button but4;
+    private Button but5;
     private int count;
     private double[] Latitudes;
     private double[] Longitudes;
@@ -79,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     private String Currentpremises;
     private int sif;
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         serverKey = "AIzaSyAU-jSsThQo2f4Ne0ijd8qScR67JFaeHKY";
@@ -94,6 +100,10 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         but1 = (Button) findViewById(R.id.button2);
         but2 = (Button) findViewById(R.id.button3);
         but3 = (Button) findViewById(R.id.button4);
+        but4 = (Button) findViewById(R.id.button5);
+        but5 = (Button) findViewById(R.id.button6);
+        Input1 = (EditText) findViewById(R.id.editText);
+        Input2 = (EditText) findViewById(R.id.editText2);
         sif = 5;
         but1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,8 +123,24 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
                 TestVectorDirection();
             }
         });
+        but4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    LookUpAddress();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         mContext = new GeoApiContext().setApiKey("AIzaSyAU-jSsThQo2f4Ne0ijd8qScR67JFaeHKY");
-        requestDirection();
+        but5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                requestDirection();
+            }
+        });
         count = 0;
     }
     public void requestDirection(){
@@ -129,9 +155,9 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         if(direction.isOK()){
             Route route = direction.getRouteList().get(0);
             directionPosList = route.getLegList().get(0).getDirectionPoint();
-            String s = directionPosList.get(3).toString();
-            String b = directionPosList.get(6).toString();
-            String e = directionPosList.get(sif).toString();
+            //String s = directionPosList.get(3).toString();
+            //String b = directionPosList.get(6).toString();
+            //String e = directionPosList.get(sif).toString();
             int a = directionPosList.size();
             String[] tt = new String[a];
             for(int i = 0 ;i < a; i++){
@@ -142,8 +168,8 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
             Longitudes = new double[a];
             stockArr = tt;
             view.setText(Integer.toString(a));
-            view1.setText(b);
-            view2.setText(e);
+            //view1.setText(b);
+            //view2.setText(e);
             for(int i = 0; i < a;i++) {
                 String[] data = tt[i].split(":", 2);
                 String data2 = data[1].substring(2, (data[1].length() - 1));
@@ -323,6 +349,34 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         //view5.setText(temp);
         //view4.setText(knownName);
 
+    }
+    public void LookUpAddress() throws IOException {
+        String s = Input1.getText().toString();
+        Geocoder geocoder = new Geocoder(this,Locale.getDefault());
+        List<Address> addresses;
+        addresses = geocoder.getFromLocationName(s,1);
+        double latitude = 0;
+        double longitude = 0;
+        if(addresses.size() > 0) {
+           latitude= addresses.get(0).getLatitude();
+           longitude= addresses.get(0).getLongitude();
+        }
+        origin = new LatLng(latitude,longitude);
+        String out = Double.toString(latitude) + " " + Double.toString(longitude);
+        Input1.setText(out);
+        String s1 = Input2.getText().toString();
+        Geocoder geocoder1 = new Geocoder(this,Locale.getDefault());
+        List<Address> addresses1;
+        addresses1 = geocoder1.getFromLocationName(s1,1);
+        //double latitude = 0;
+        //double longitude = 0;
+        if(addresses1.size() > 0) {
+            latitude= addresses1.get(0).getLatitude();
+            longitude= addresses1.get(0).getLongitude();
+        }
+        destination = new LatLng(latitude,longitude);
+        String out2 = Double.toString(latitude) + " " + Double.toString(longitude);
+        Input2.setText(out2);
     }
 
 }
