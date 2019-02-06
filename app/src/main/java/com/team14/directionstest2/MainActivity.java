@@ -63,27 +63,56 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     private TextView view2;
     private TextView view3;
     private TextView view4;
+    private TextView view5;
     private String[] stockArr;
     ArrayList<LatLng> directionPosList;
     private GeoApiContext mContext;
     private Button but1;
+    private Button but2;
+    private Button but3;
     private int count;
     private double[] Latitudes;
     private double[] Longitudes;
+    private int[] stre;
+    private String currentString;
+    private String CurrentStreet;
+    private String Currentpremises;
+    private int sif;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         serverKey = "AIzaSyAU-jSsThQo2f4Ne0ijd8qScR67JFaeHKY";
-        origin = new LatLng(51.512792, -0.177116);;
-        destination = new LatLng(51.498857, -0.176238);
+        origin = new LatLng(51.059324, 0.163243);
+        destination = new LatLng(51.058562, 0.163186);
         view = (TextView) findViewById(R.id.textview);
         view1 = (TextView) findViewById(R.id.textView);
         view2 = (TextView) findViewById(R.id.textView2);
         view3 = (TextView) findViewById(R.id.textView3);
         view4 = (TextView) findViewById(R.id.textView4);
+        view5 = (TextView) findViewById(R.id.textView5);
         but1 = (Button) findViewById(R.id.button2);
-        but1.setOnClickListener(this);
+        but2 = (Button) findViewById(R.id.button3);
+        but3 = (Button) findViewById(R.id.button4);
+        sif = 5;
+        but1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Forward();
+            }
+        });
+        but2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Reverse();
+            }
+        });
+        but3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TestVectorDirection();
+            }
+        });
         mContext = new GeoApiContext().setApiKey("AIzaSyAU-jSsThQo2f4Ne0ijd8qScR67JFaeHKY");
         requestDirection();
         count = 0;
@@ -102,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
             directionPosList = route.getLegList().get(0).getDirectionPoint();
             String s = directionPosList.get(3).toString();
             String b = directionPosList.get(6).toString();
-            String e = directionPosList.get(8).toString();
+            String e = directionPosList.get(sif).toString();
             int a = directionPosList.size();
             String[] tt = new String[a];
             for(int i = 0 ;i < a; i++){
@@ -135,12 +164,41 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     public void onDirectionFailure(Throwable t) {
         view.setText("Major Failure");
     }
-    @Override
-    public void onClick(View v){
+    public void Reverse(){
+        count = count - 3;
         try {
-            if(count < Latitudes.length) {
+            if(count < Latitudes.length && count >= 0) {
                 snapToRoads(Latitudes[count], Longitudes[count]);
-                count = count + 3;
+                //count = count + 3;
+                String[] col = currentString.split(",",5);
+                int s = col.length;
+                String g = Integer.toString(s);
+                //view4.setText(g);
+                if(s>3){
+                    CurrentStreet = col[1];
+                    if(CurrentStreet.equals(" South Kensington") || CurrentStreet.equals(" Knightsbridge")){
+                        CurrentStreet = col[0];
+                    }
+                }
+                else{
+                    CurrentStreet = col[0];
+                }
+                String[] del = CurrentStreet.split(" ",5);
+                String temp;
+                if(del.length > 3){
+                    temp = del[2] + " " + del[3];
+                }
+                else if(del.length > 2){
+                    temp = del[1] + " " + del[2];
+                }
+                else if(del.length > 1){
+                    temp = del[0] + " " + del[1];
+                }
+                else{
+                    temp = del[0];
+                }
+                view4.setText(temp);
+                view5.setText(Currentpremises);
             }
             else{
                 view3.setText("End of Instructions");
@@ -149,7 +207,103 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         catch(IOException e){
 
         }
+    }
+    public void Forward(){
+        //count = count + 3;
+        try {
+            if(count < Latitudes.length) {
+                snapToRoads(Latitudes[count], Longitudes[count]);
+                count = count + 3;
+                //count = count + 3;
+                String[] col = currentString.split(",",5);
+                int s = col.length;
+                String g = Integer.toString(s);
+                //view4.setText(g);
+                if(s>3){
+                    CurrentStreet = col[1];
+                    if(CurrentStreet.equals(" South Kensington") || CurrentStreet.equals(" Knightsbridge")){
+                        CurrentStreet = col[0];
+                    }
+                }
+                else{
+                    CurrentStreet = col[0];
+                }
+                String[] del = CurrentStreet.split(" ",5);
+                String temp;
+                if(del.length > 3){
+                    temp = del[2] + " " + del[3];
+                }
+                else if(del.length > 2){
+                    temp = del[1] + " " + del[2];
+                }
+                else if(del.length > 1){
+                    temp = del[0] + " " + del[1];
+                }
+                else{
+                    temp = del[0];
+                }
+                view4.setText(temp);
+                view5.setText(Currentpremises);
+            }
+            else{
+                view3.setText("End of Instructions");
+            }
+        }
+        catch(IOException e){
 
+        }
+    }
+    @Override
+    public void onClick(View v){
+        /*try {
+            if(count < Latitudes.length) {
+                snapToRoads(Latitudes[count], Longitudes[count]);
+                count = count + 3;
+                String[] col = currentString.split(",",5);
+                int s = col.length;
+                String g = Integer.toString(s);
+                //view4.setText(g);
+                if(s>3){
+                    CurrentStreet = col[1];
+                }
+                else{
+                    CurrentStreet = col[0];
+                }
+                String[] del = CurrentStreet.split(" ",5);
+                String temp;
+                if(del.length > 3){
+                    temp = del[2] + " " + del[3];
+                }
+                else if(del.length > 2){
+                    temp = del[1] + " " + del[2];
+                }
+                else if(del.length > 1){
+                    temp = del[0] + " " + del[1];
+                }
+                else{
+                    temp = del[0];
+                }
+                view4.setText(temp);
+                view5.setText(Currentpremises);
+            }
+            else{
+                view3.setText("End of Instructions");
+            }
+        }
+        catch(IOException e){
+
+        }*/
+
+    }
+    public void TestVectorDirection(){
+        stre = new int[1];
+        stre[0] = sif;
+        String temp = Double.toString(Latitudes[sif]) + " " +  Double.toString(Longitudes[sif]);
+        view2.setText(temp);
+        sif++;
+        CalculateDirections f = new CalculateDirections(Latitudes,Longitudes,stre);
+        String hij = f.CalcVectors(0);
+        view1.setText(hij);
     }
     private void snapToRoads(double latitude, double longitude) throws IOException {
         Geocoder geocoder;
@@ -162,8 +316,12 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         String country = addresses.get(0).getCountryName();
         String postalCode = addresses.get(0).getPostalCode();
         String knownName = addresses.get(0).getFeatureName();
+        //String temp = addresses.get(0).;
+        Currentpremises = addresses.get(0).getPremises();
+        currentString = address;
         view3.setText(address);
-        view4.setText(knownName);
+        //view5.setText(temp);
+        //view4.setText(knownName);
 
     }
 
