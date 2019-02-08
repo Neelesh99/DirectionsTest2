@@ -1,11 +1,18 @@
 package com.team14.directionstest2;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.RoadsApi;
 
+import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
+import android.os.Handler;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -52,6 +59,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static java.lang.Double.valueOf;
 
 public class MainActivity extends AppCompatActivity implements DirectionCallback, View.OnClickListener{
@@ -76,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     private Button but3;
     private Button but4;
     private Button but5;
+    private Button but6;
     private int count;
     private double[] Latitudes;
     private double[] Longitudes;
@@ -84,6 +93,10 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     private String CurrentStreet;
     private String Currentpremises;
     private int sif;
+    private FusedLocationProviderClient client;
+    double CurrentLat;
+    double CurrentLong;
+    boolean CurrentAsOrigin = false;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         but3 = (Button) findViewById(R.id.button4);
         but4 = (Button) findViewById(R.id.button5);
         but5 = (Button) findViewById(R.id.button6);
+        but6 = (Button) findViewById(R.id.toStart);
         Input1 = (EditText) findViewById(R.id.editText);
         Input2 = (EditText) findViewById(R.id.editText2);
         sif = 5;
@@ -141,7 +155,58 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
                 requestDirection();
             }
         });
+        but6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                useCurrentAsStartPoint();
+            }
+        });
         count = 0;
+        requestPermission();
+        client = LocationServices.getFusedLocationProviderClient(this);
+        Button button = findViewById(R.id.getLocation);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                getLoc();
+                //TextView f = findViewById(R.id.Kale);
+                //f.setText("Hello No");
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        // yourMethod();
+                        getLoc();
+                        //TextView t = findViewById(R.id.Kale);
+                        //t.setText("Hello Yes");
+                    }
+                }, 20000);
+
+               /* if (ActivityCompat.checkSelfPermission(MainActivity.this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+
+                    return;
+                }
+                //while(on) {
+                    client.getLastLocation().addOnSuccessListener(MainActivity.this, new OnSuccessListener<Location>() {
+                        @Override
+                        public void onSuccess(Location location) {
+
+                            if (location != null) {
+                                TextView textView = findViewById(R.id.location);
+                                TextView ted = findViewById(R.id.location2);
+                                double temp = location.getLatitude();
+                                double temp2 = location.getLongitude();
+                                textView.setText(Double.toString(temp));
+                                ted.setText(Double.toString(temp2));
+                            }
+
+                        }
+                    });*/
+                //}
+
+            }
+        });
+
     }
     public void requestDirection(){
         GoogleDirection.withServerKey(serverKey)
@@ -351,19 +416,25 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
 
     }
     public void LookUpAddress() throws IOException {
-        String s = Input1.getText().toString();
-        Geocoder geocoder = new Geocoder(this,Locale.getDefault());
-        List<Address> addresses;
-        addresses = geocoder.getFromLocationName(s,1);
         double latitude = 0;
         double longitude = 0;
-        if(addresses.size() > 0) {
-           latitude= addresses.get(0).getLatitude();
-           longitude= addresses.get(0).getLongitude();
+        if(!CurrentAsOrigin) {
+            String s = Input1.getText().toString();
+            Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+            List<Address> addresses;
+            addresses = geocoder.getFromLocationName(s, 1);
+
+            if (addresses.size() > 0) {
+                latitude = addresses.get(0).getLatitude();
+                longitude = addresses.get(0).getLongitude();
+            }
+            origin = new LatLng(latitude, longitude);
+            String out = Double.toString(latitude) + " " + Double.toString(longitude);
+            Input1.setText(out);
         }
-        origin = new LatLng(latitude,longitude);
-        String out = Double.toString(latitude) + " " + Double.toString(longitude);
-        Input1.setText(out);
+        else{
+            CurrentAsOrigin = false;
+        }
         String s1 = Input2.getText().toString();
         Geocoder geocoder1 = new Geocoder(this,Locale.getDefault());
         List<Address> addresses1;
@@ -377,6 +448,38 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         destination = new LatLng(latitude,longitude);
         String out2 = Double.toString(latitude) + " " + Double.toString(longitude);
         Input2.setText(out2);
+    }
+    private void requestPermission(){
+        ActivityCompat.requestPermissions(this,new String[]{ACCESS_FINE_LOCATION},1);
+    }
+    private void getLoc(){
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED ) {
+
+            return;
+        }
+        client.getLastLocation().addOnSuccessListener(MainActivity.this, new OnSuccessListener<Location>() {
+            @Override
+            public void onSuccess(Location location) {
+
+                if (location != null) {
+                    TextView textView = findViewById(R.id.toLat);
+                    TextView ted = findViewById(R.id.toLong);
+                    double temp = location.getLatitude();
+                    CurrentLat = temp;
+                    double temp2 = location.getLongitude();
+                    CurrentLong = temp2;
+                    textView.setText(Double.toString(temp));
+                    ted.setText(Double.toString(temp2));
+                }
+
+            }
+        });
+    }
+    public void useCurrentAsStartPoint(){
+        origin = new LatLng(CurrentLat,CurrentLong);
+        String out = Double.toString(CurrentLat) + " " + Double.toString(CurrentLong);
+        Input1.setText(out);
+        CurrentAsOrigin = true;
     }
 
 }
