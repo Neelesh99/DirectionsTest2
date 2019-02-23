@@ -19,6 +19,7 @@ public class BluetoothConnect extends Thread{
         BluetoothServerSocket tmp = null;
         try {
             // MY_UUID is the app's UUID string, also used by the client code.
+            //
             tmp = mBluetoothAdapter.listenUsingRfcommWithServiceRecord(NAME, MY_UUID);
         } catch (IOException e) {
             Log.e(TAG, "Socket's listen() method failed", e);
