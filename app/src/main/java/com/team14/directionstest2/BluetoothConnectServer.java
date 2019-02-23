@@ -10,7 +10,7 @@ import java.lang.Thread;
 import android.content.BroadcastReceiver;
 
 //this class will attempt to connect to another BT device and set up a RF channel
-public class BluetoothConnect extends Thread{
+public class BluetoothConnectServer extends Thread{
     private BluetoothServerSocket mmServerSocket;
 
     public AcceptThread() {
