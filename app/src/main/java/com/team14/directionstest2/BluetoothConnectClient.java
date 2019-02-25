@@ -16,7 +16,7 @@ public class BluetoothConnectCLient extends Thread{
   private class ConnectThread extends Thread {
   private final BluetoothSocket mmSocket;
   private final BluetoothDevice mmDevice;
-  
+
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     ...
