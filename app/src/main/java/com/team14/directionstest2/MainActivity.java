@@ -52,12 +52,14 @@ import com.google.maps.model.GeocodingResult;
 //import com.google.maps.model.LatLng;
 import com.google.maps.model.SnappedPoint;
 import com.google.maps.model.SpeedLimit;
+import com.team14.directionstest2.FormatForCommunication;
 
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Vector;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 import static java.lang.Double.valueOf;
@@ -97,6 +99,13 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     double CurrentLat;
     double CurrentLong;
     boolean CurrentAsOrigin = false;
+    boolean End_Of_Instructions = true;
+    public FormatForCommunication Formatter = new FormatForCommunication();
+    public Vector<Double> Turn_Lat;
+    public Vector<Double> Turn_Long;
+    public Vector<Double> Distances;
+    public Vector<String> NextStreet;
+    public int[] Turn_Index;
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -218,6 +227,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     @Override
     public void onDirectionSuccess(Direction direction, String rawBody){
         if(direction.isOK()){
+            End_Of_Instructions = false;
             Route route = direction.getRouteList().get(0);
             directionPosList = route.getLegList().get(0).getDirectionPoint();
             //String s = directionPosList.get(3).toString();
@@ -256,9 +266,10 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         view.setText("Major Failure");
     }
     public void Reverse(){
-        count = count - 3;
+        count = count - 1;
         try {
             if(count < Latitudes.length && count >= 0) {
+                End_Of_Instructions = false;
                 snapToRoads(Latitudes[count], Longitudes[count]);
                 //count = count + 3;
                 String[] col = currentString.split(",",5);
@@ -293,6 +304,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
             }
             else{
                 view3.setText("End of Instructions");
+                End_Of_Instructions = true;
             }
         }
         catch(IOException e){
@@ -303,8 +315,9 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         //count = count + 3;
         try {
             if(count < Latitudes.length) {
+                End_Of_Instructions = false;
                 snapToRoads(Latitudes[count], Longitudes[count]);
-                count = count + 3;
+                count = count + 1;
                 //count = count + 3;
                 String[] col = currentString.split(",",5);
                 int s = col.length;
@@ -338,6 +351,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
             }
             else{
                 view3.setText("End of Instructions");
+                End_Of_Instructions = true;
             }
         }
         catch(IOException e){
@@ -480,6 +494,110 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         String out = Double.toString(CurrentLat) + " " + Double.toString(CurrentLong);
         Input1.setText(out);
         CurrentAsOrigin = true;
+    }
+    public void Clock_Screen(){
+        char[] For_Transmit = Formatter.GoToClock();
+        /// Transmit For_Transmit///
+    }
+    public void Navigation_Cycle() throws InterruptedException {
+        int instruction = 0;
+        char[] For_Transmit = Formatter.RecieveBluetooth();
+        ///Transmit For_Transmit ///
+        wait(500);
+        String street = CurrentStreet;
+        String Distance = Distances.elementAt(instruction).toString();
+        String Next_Street = NextStreet.elementAt(instruction);
+        CalculateDirections Cal = new CalculateDirections(Latitudes,Longitudes,Turn_Index);
+        int Turn_No = 0;
+        String Direction = Cal.CalcVectors(Turn_No);
+        Turn_No++;
+        For_Transmit = Formatter.StartNav(street,Distance,Next_Street,Direction);
+        ///Transmit For Transmit ///
+        boolean arrived = false;
+        while(!arrived){
+            if(Calculate_Instant_Distance(Turn_No) < 10 && Turn_No != (Next_Street.length()-2)){
+                boolean turned = false;
+                For_Transmit = Formatter.SwitchToTurn(Next_Street,Direction);
+                ///Transmit For_Transmit ///
+                while(!turned){
+                    double dist = Calculate_Instant_Distance(Turn_No);
+                    if(dist > 10){
+                        turned = true;
+                    }
+                }
+                Turn_No++;
+                CurrentStreet = Next_Street;
+                street = CurrentStreet;
+                Distance = Distances.elementAt(Turn_No).toString();
+                Next_Street = NextStreet.elementAt(Turn_No);
+                Direction = Cal.CalcVectors(Turn_No);
+                For_Transmit = Formatter.ReturnToGeneral(street,Distance,Next_Street,Direction);
+                ///Transmit For_Transmit///
+            }
+            else if(Turn_No != (Next_Street.length()-2)){
+                wait(1000);
+                Distance = Calculate_Instant_Distance(Turn_No++).toString();
+                For_Transmit = Formatter.ReturnToGeneral(street,Distance,Next_Street,Direction);
+                ///Transmit For_Transmit///
+            }
+            else{
+                For_Transmit = Formatter.ArrivalScreen(street);
+                ///Transmit For_Transmit///
+            }
+        }
+    }
+    public void Calculate_Turns(){
+        Forward();
+        int star = 0;
+        String hold = CurrentStreet;
+        for(int i = 0; !End_Of_Instructions ;i++){
+            Forward();
+            if(CurrentStreet.equals(hold)){
+
+            }
+            else{
+                Turn_Lat.addElement(Latitudes[i]);
+                Turn_Long.addElement(Longitudes[i]);
+                NextStreet.addElement(CurrentStreet);
+                hold = CurrentStreet;
+                Turn_Index[star] = i;
+                star++;
+            }
+        }
+        count = 0;
+    }
+    public void Calulate_Distance(){
+        double R = 6371e3;
+        for(int i = 0; i < Turn_Lat.size();i++){
+            getLoc();
+            double phi1 = CurrentLat;
+            double lambda1 = CurrentLong;
+            double phi2 = Turn_Lat.elementAt(i);
+            double lambda2 = Turn_Long.elementAt(i);
+            double delta_phi = ToRadians(phi1) - ToRadians(phi2);
+            double delta_lambda = ToRadians(lambda1) - ToRadians(lambda2);
+            double a = (Math.sin(delta_phi/2)*Math.sin(delta_phi/2)) + Math.cos(ToRadians(phi1))*Math.cos(ToRadians(phi2))*(Math.sin(delta_lambda/2)*Math.sin(delta_lambda/2));
+            double c = 2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+            double d = R*c;
+            Distances.addElement(d);
+        }
+    }
+    public Double Calculate_Instant_Distance(int i){
+        double R = 6371e3;
+        getLoc();
+        double phi1 = CurrentLat;
+        double lambda1 = CurrentLong;
+        double phi2 = Turn_Lat.elementAt(i);
+        double lambda2 = Turn_Long.elementAt(i);
+        double delta_phi = ToRadians(phi1) - ToRadians(phi2);
+        double delta_lambda = ToRadians(lambda1) - ToRadians(lambda2);
+        double a = (Math.sin(delta_phi/2)*Math.sin(delta_phi/2)) + Math.cos(ToRadians(phi1))*Math.cos(ToRadians(phi2))*(Math.sin(delta_lambda/2)*Math.sin(delta_lambda/2));
+        double c = 2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+        return R*c;
+
+    }
+    public double ToRadians(double in){
+        return in*(Math.PI/180);
     }
 
 }

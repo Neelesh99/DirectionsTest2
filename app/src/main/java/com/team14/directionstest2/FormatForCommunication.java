@@ -5,6 +5,11 @@ import java.util.Date;
 //package com.team14.directionstest2;
 
 public class FormatForCommunication {
+
+    FormatForCommunication(){
+
+    }
+
     public char[] DebugMode(){
         String temp = "cccEXECcccsssDBUGsss";
         return temp.toCharArray();
@@ -23,7 +28,7 @@ public class FormatForCommunication {
     }
     public char[] GoToClock(){
         Date currentTime = Calendar.getInstance().getTime();
-        String temp = "cccINSTRcccsssCLKSssseeeNORMeeeddd1/" + currentTime.toString() + "///";
+        String temp = "cccINSTRcccsssCLKSssseeeNORMeeeN/A";
         return temp.toCharArray();
     }
     public char[] RecieveBluetooth(){
