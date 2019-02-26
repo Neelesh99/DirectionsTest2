@@ -16,7 +16,7 @@ import android.content.BroadcastReceiver;
 import android.util.Log;
 
 
-public class BluetoothConnectCLient extends Thread{
+public class BluetoothConnectClient extends Thread{
   private class ConnectThread extends Thread {
   private final BluetoothSocket mmSocket;
   private final BluetoothDevice mmDevice;

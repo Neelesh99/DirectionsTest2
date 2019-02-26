@@ -81,7 +81,7 @@ public class BluetoothComm {
         }
 
         // Call this from the main activity to send data to the remote device.
-        public void write(char[] bytes_to_send) {
+        public void write(byte[] bytes_to_send) {
             try {
                 mmOutStream.write(bytes_to_send);
 
