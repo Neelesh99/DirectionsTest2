@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     private Button but4;
     private Button but5;
     private Button but6;
+    private Button but7;
     private int count;
     private double[] Latitudes;
     private double[] Longitudes;
@@ -125,9 +126,23 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         but4 = (Button) findViewById(R.id.button5);
         but5 = (Button) findViewById(R.id.button6);
         but6 = (Button) findViewById(R.id.toStart);
+        but7 = (Button) findViewById(R.id.Go_button);
         Input1 = (EditText) findViewById(R.id.editText);
         Input2 = (EditText) findViewById(R.id.editText2);
         sif = 5;
+        but7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calculate_Turns();
+                Calulate_Distance();
+                Clock_Screen();
+                try {
+                    Navigation_Cycle();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         but1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
