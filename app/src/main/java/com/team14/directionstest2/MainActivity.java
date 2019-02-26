@@ -6,6 +6,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.GeoApiContext;
 
 
+import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -87,6 +88,9 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     public Vector<Double> Distances;
     public Vector<String> NextStreet;
     public int[] Turn_Index;
+
+    private BluetoothSocket msocket;
+    private BluetoothComm comm=new BluetoothComm();
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

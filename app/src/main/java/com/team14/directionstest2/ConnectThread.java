@@ -17,11 +17,11 @@ public class ConnectThread extends Thread {
     private static final String TAG = "BTCli_Con_DEBUG";
     Intent in;
 
-    public ConnectThread(String device) {
+    public ConnectThread(BluetoothDevice device) {
         // Use a temporary object that is later assigned to mmSocket
         // because mmSocket is final.
         BluetoothSocket tmp = null;
-        mmDevice = n(BluetoothDevice) BluetoothAdapter.getRemoteDevice(device);
+        mmDevice = device;
         ParcelUuid[] uu=device.getUuids();
         String string=uu.toString();
         UUID id=UUID.fromString(string);
