@@ -1,19 +1,25 @@
-package com.example.uitest;
+package com.team14.directionstest2;
 
 
+import android.bluetooth.BluetoothSocket;
 import android.os.Bundle;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
+
+import java.io.IOException;
 import java.lang.Thread;
 import android.content.BroadcastReceiver;
+import android.util.Log;
+
+import static android.content.ContentValues.TAG;
 
 //this class will attempt to connect to another BT device and set up a RF channel
 public class BluetoothConnectServer extends Thread{
     private BluetoothServerSocket mmServerSocket;
 
-    public AcceptThread() {
+    public void AcceptThread() {
         // Use a temporary object that is later assigned to mmServerSocket
         // because mmServerSocket is final.
         BluetoothServerSocket tmp = null;
@@ -42,7 +48,12 @@ public class BluetoothConnectServer extends Thread{
                 // A connection was accepted. Perform work associated with
                 // the connection in a separate thread.
                 manageMyConnectedSocket(socket);
-                mmServerSocket.close();
+                try {
+                    mmServerSocket.close();
+                }
+                catch(IOException e){
+                    Log.e(TAG, "Socket's accept() method failed", e);
+                }
                 break;
             }
         }
