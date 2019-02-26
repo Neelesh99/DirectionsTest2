@@ -16,7 +16,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.android.common.logger.Log;
+//import com.example.android.common.logger.Log;
 
 import java.util.Set;
 
@@ -28,24 +28,16 @@ import java.util.Set;
  */
 public class DeviceListActivity extends Activity {
 
-    /**
-     * Tag for Log
-     */
+    /*** Tag for Log*/
     private static final String TAG = "DeviceListActivity";
 
-    /**
-     * Return Intent extra
-     */
+    /** Return Intent extra*/
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
 
-    /**
-     * Member fields
-     */
+    /*Member fields*/
     private BluetoothAdapter mBtAdapter;
 
-    /**
-     * Newly discovered devices
-     */
+    /**Newly discovered device*/
     private ArrayAdapter<String> mNewDevicesArrayAdapter;
 
     @Override
@@ -123,9 +115,7 @@ public class DeviceListActivity extends Activity {
         this.unregisterReceiver(mReceiver);
     }
 
-    /**
-     * Start device discover with the BluetoothAdapter
-     */
+    /**Start device discover with the BluetoothAdapter*/
     private void doDiscovery() {
         Log.d(TAG, "doDiscovery()");
 
