@@ -1,8 +1,10 @@
-package com.example.uitest;
+package com.team14.directionstest2;
 
 import android.os.Bundle;
 import android.app.Activity;
 import android.bluetooth.BluetoothSocket;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import android.bluetooth.BluetoothDevice;
@@ -12,6 +14,8 @@ import java.util.Set;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 
 public class BluetoothComm {
     private static final String TAG = "MY_APP_DEBUG_TAG";

@@ -1,15 +1,19 @@
-package com.example.uitest;
+package com.team14.directionstest2;
 
 
+import android.bluetooth.BluetoothSocket;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+
+import java.io.IOException;
 import java.lang.Thread;
 import android.content.BroadcastReceiver;
-
-
-
+import android.util.Log;
 
 
 public class BluetoothConnectCLient extends Thread{
@@ -19,7 +23,7 @@ public class BluetoothConnectCLient extends Thread{
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
-    ...
+
 
     // Register for broadcasts when a device is discovered.
     IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
@@ -43,7 +47,7 @@ public class BluetoothConnectCLient extends Thread{
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    ...
+
 
     // Don't forget to unregister the ACTION_FOUND receiver.
     unregisterReceiver(receiver);
