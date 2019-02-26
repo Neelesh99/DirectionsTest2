@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.ParcelUuid;
 import android.util.Log;
+import android.content.Intent;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -14,12 +15,13 @@ public class ConnectThread extends Thread {
     private final BluetoothDevice mmDevice;
     public BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private static final String TAG = "BTCli_Con_DEBUG";
+    Intent in;
 
-    public ConnectThread(BluetoothDevice device) {
+    public ConnectThread(String device) {
         // Use a temporary object that is later assigned to mmSocket
         // because mmSocket is final.
         BluetoothSocket tmp = null;
-        mmDevice = device;
+        mmDevice = n(BluetoothDevice) BluetoothAdapter.getRemoteDevice(device);
         ParcelUuid[] uu=device.getUuids();
         String string=uu.toString();
         UUID id=UUID.fromString(string);
@@ -51,6 +53,7 @@ public class ConnectThread extends Thread {
         // The connection attempt succeeded. Perform work associated with
         // the connection in a separate thread.
 
+        //in = (Intent) in.getIntent();
     }
 
     // Closes the client socket and causes the thread to finish.

@@ -4,9 +4,10 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.maps.GeoApiContext;
-import com.google.maps.GeocodingApi;
-import com.google.maps.RoadsApi;
 
+
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -26,33 +27,10 @@ import com.akexorcist.googledirection.GoogleDirection;
 import com.akexorcist.googledirection.constant.TransportMode;
 import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Route;
-import com.akexorcist.googledirection.util.DirectionConverter;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
+
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.maps.model.SnappedPoint;
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.maps.GeoApiContext;
-import com.google.maps.GeocodingApi;
-import com.google.maps.RoadsApi;
-import com.google.maps.android.ui.IconGenerator;
-import com.google.maps.model.GeocodingResult;
-//import com.google.maps.model.LatLng;
-import com.google.maps.model.SnappedPoint;
-import com.google.maps.model.SpeedLimit;
-import com.team14.directionstest2.FormatForCommunication;
+
+
 
 
 import java.io.IOException;
@@ -62,6 +40,7 @@ import java.util.Locale;
 import java.util.Vector;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
+import static android.content.Context.*;
 import static java.lang.Double.valueOf;
 
 public class MainActivity extends AppCompatActivity implements DirectionCallback, View.OnClickListener{
@@ -88,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     private Button but5;
     private Button but6;
     private Button but7;
+    private Button SearchBT;
     private int count;
     private double[] Latitudes;
     private double[] Longitudes;
@@ -127,6 +107,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         but5 = (Button) findViewById(R.id.button6);
         but6 = (Button) findViewById(R.id.toStart);
         but7 = (Button) findViewById(R.id.Go_button);
+        SearchBT=(Button) findViewById(R.id.button7);
         Input1 = (EditText) findViewById(R.id.editText);
         Input2 = (EditText) findViewById(R.id.editText2);
         sif = 5;
@@ -183,6 +164,12 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
             @Override
             public void onClick(View v) {
                 useCurrentAsStartPoint();
+            }
+        });
+        SearchBT.setOnClickListener(new View.OnClickListener(){
+            public void onClick (View v){
+                Intent in = new Intent(MainActivity.this, DeviceListActivity.class);
+                startActivity(in);
             }
         });
         count = 0;
