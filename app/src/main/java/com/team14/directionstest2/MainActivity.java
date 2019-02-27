@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
 
     private BluetoothSocket msocket;
     private BluetoothComm comm=new BluetoothComm();
+
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -223,6 +224,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         });
 
     }
+
     public void requestDirection(){
         GoogleDirection.withServerKey(serverKey)
                 .from(origin)
@@ -503,11 +505,17 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     }
     public void Clock_Screen(){
         char[] For_Transmit = Formatter.GoToClock();
+        String trans=For_Transmit.toString();
+        byte[] transmit=trans.getBytes();
+        BluetoothComm.ConnectedThread.write(transmit);
         /** Transmit For_Transmit**/
     }
     public void Navigation_Cycle() throws InterruptedException {
         int instruction = 0;
         char[] For_Transmit = Formatter.RecieveBluetooth();
+        String trans=For_Transmit.toString();
+        byte[] transmit=trans.getBytes();
+        BluetoothComm.ConnectedThread.write(transmit);
         /** Transmit For_Transmit**/
         wait(500);
         String street = CurrentStreet;
@@ -518,13 +526,21 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         String Direction = Cal.CalcVectors(Turn_No);
         Turn_No++;
         For_Transmit = Formatter.StartNav(street,Distance,Next_Street,Direction);
+        String trans=For_Transmit.toString();
+        byte[] transmit=trans.getBytes();
+        BluetoothComm.ConnectedThread.write(transmit);
         /** Transmit For_Transmit**/
         boolean arrived = false;
         while(!arrived){
             if(Calculate_Instant_Distance(Turn_No) < 10 && Turn_No != (Next_Street.length()-2)){
                 boolean turned = false;
                 For_Transmit = Formatter.SwitchToTurn(Next_Street,Direction);
+
+                trans=For_Transmit.toString();
+                transmit=trans.getBytes();
+                BluetoothComm.ConnectedThread.write(transmit);
                 /** Transmit For_Transmit**/
+
                 while(!turned){
                     double dist = Calculate_Instant_Distance(Turn_No);
                     if(dist > 10){
@@ -538,16 +554,26 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
                 Next_Street = NextStreet.elementAt(Turn_No);
                 Direction = Cal.CalcVectors(Turn_No);
                 For_Transmit = Formatter.ReturnToGeneral(street,Distance,Next_Street,Direction);
+
+                trans=For_Transmit.toString();
+                transmit=trans.getBytes();
+                BluetoothComm.ConnectedThread.write(transmit);
                 /** Transmit For_Transmit**/
             }
             else if(Turn_No != (Next_Street.length()-2)){
                 wait(1000);
                 Distance = Calculate_Instant_Distance(Turn_No++).toString();
                 For_Transmit = Formatter.ReturnToGeneral(street,Distance,Next_Street,Direction);
+                trans=For_Transmit.toString();
+                transmit=trans.getBytes();
+                BluetoothComm.ConnectedThread.write(transmit);
                 /** Transmit For_Transmit**/
             }
             else{
                 For_Transmit = Formatter.ArrivalScreen(street);
+                trans=For_Transmit.toString();
+                transmit=trans.getBytes();
+                BluetoothComm.ConnectedThread.write(transmit);
                 /** Transmit For_Transmit**/
             }
         }

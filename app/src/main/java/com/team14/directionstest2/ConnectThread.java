@@ -10,12 +10,13 @@ import android.content.Intent;
 import java.io.IOException;
 import java.util.UUID;
 
+import static android.content.Intent.getIntent;
+
 public class ConnectThread extends Thread {
     private final BluetoothSocket mmSocket;
     private final BluetoothDevice mmDevice;
     public BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     private static final String TAG = "BTCli_Con_DEBUG";
-    Intent in;
 
     public ConnectThread(BluetoothDevice device) {
         // Use a temporary object that is later assigned to mmSocket
@@ -53,7 +54,7 @@ public class ConnectThread extends Thread {
         // The connection attempt succeeded. Perform work associated with
         // the connection in a separate thread.
 
-        //in = (Intent) in.getIntent();
+        //Intent in = new Intent( BluetoothSocket.class);
     }
 
     // Closes the client socket and causes the thread to finish.
