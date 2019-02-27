@@ -89,8 +89,8 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     public Vector<String> NextStreet;
     public int[] Turn_Index;
 
-    private BluetoothSocket msocket;
-    private BluetoothComm comm=new BluetoothComm();
+    private BluetoothComm Comm= new BluetoothComm();
+    //private comm;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -175,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
             public void onClick (View v){
                 Intent in = new Intent(MainActivity.this, DeviceListActivity.class);
                 startActivity(in);
+                //mchat.start();
             }
         });
         count = 0;
@@ -507,7 +508,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         char[] For_Transmit = Formatter.GoToClock();
         String trans=For_Transmit.toString();
         byte[] transmit=trans.getBytes();
-        BluetoothComm.ConnectedThread.write(transmit);
+        BluetoothComm.ConnectedThread.write write = new BluetoothComm.ConnectedThread.write(transmit);
         /** Transmit For_Transmit**/
     }
     public void Navigation_Cycle() throws InterruptedException {
@@ -515,7 +516,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         char[] For_Transmit = Formatter.RecieveBluetooth();
         String trans=For_Transmit.toString();
         byte[] transmit=trans.getBytes();
-        BluetoothComm.ConnectedThread.write(transmit);
+        //BluetoothComm.ConnectedThread.write write = new BluetoothComm.ConnectedThread.write(transmit);
         /** Transmit For_Transmit**/
         wait(500);
         String street = CurrentStreet;
@@ -538,7 +539,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
 
                 trans=For_Transmit.toString();
                 transmit=trans.getBytes();
-                BluetoothComm.ConnectedThread.write(transmit);
+                comm.ConnectedThread.write(transmit);
                 /** Transmit For_Transmit**/
 
                 while(!turned){

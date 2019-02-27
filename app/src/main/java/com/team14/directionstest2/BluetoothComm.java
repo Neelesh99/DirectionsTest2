@@ -1,24 +1,14 @@
 package com.team14.directionstest2;
 
-import android.bluetooth.BluetoothAdapter;
-import android.os.Bundle;
-import android.app.Activity;
 import android.bluetooth.BluetoothSocket;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import android.bluetooth.BluetoothDevice;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import java.util.Set;
-import android.content.Intent;
-import android.content.IntentFilter;
-import java.util.UUID;
-import android.os.Handler;
-import android.os.Message;
-import android.os.ParcelUuid;
-import android.util.Log;
 
 public class BluetoothComm {
     private static final String TAG = "BTComm_DEBUG_TAG";

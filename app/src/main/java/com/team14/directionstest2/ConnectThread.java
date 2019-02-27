@@ -5,12 +5,9 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.ParcelUuid;
 import android.util.Log;
-import android.content.Intent;
 
 import java.io.IOException;
 import java.util.UUID;
-
-import static android.content.Intent.getIntent;
 
 public class ConnectThread extends Thread {
     private final BluetoothSocket mmSocket;
@@ -51,10 +48,12 @@ public class ConnectThread extends Thread {
             }
         }
 
+
+        //BluetoothComm.ConnectedThread(mmSocket);
         // The connection attempt succeeded. Perform work associated with
         // the connection in a separate thread.
 
-        //Intent in = new Intent( BluetoothSocket.class);
+
     }
 
     // Closes the client socket and causes the thread to finish.
