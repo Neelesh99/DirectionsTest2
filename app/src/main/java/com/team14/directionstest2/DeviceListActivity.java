@@ -148,16 +148,17 @@ public class DeviceListActivity extends Activity {
             String info = ((TextView) v).getText().toString();
             String address = info.substring(info.length() - 17);//MAC address
 
-            BluetoothAdapter a=BluetoothAdapter.getDefaultAdapter();
-            BluetoothDevice device=a.getRemoteDevice(address);
-            ConnectThread connect= new ConnectThread(device);
+            //BluetoothAdapter a=BluetoothAdapter.getDefaultAdapter();
+            //BluetoothDevice device=a.getRemoteDevice(address);
+            //ConnectThread connect= new ConnectThread(device);
 
             // Create the result Intent and include the MAC address
-            //Intent intent = new Intent();
-            //intent.putExtra(EXTRA_DEVICE_ADDRESS, address);
+            //Intent intent = new Intent(DeviceListActivity.this,MainActivity.class);
+            Intent Resultintent=new Intent();
+            Resultintent.putExtra(EXTRA_DEVICE_ADDRESS, address);
 
             // Set result and finish this Activity
-            //setResult(Activity.RESULT_OK, intent);
+            setResult(Activity.RESULT_OK, Resultintent);
             finish();
         }
     };

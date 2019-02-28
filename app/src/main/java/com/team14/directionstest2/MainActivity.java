@@ -1,5 +1,8 @@
 package com.team14.directionstest2;
 
+import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -37,6 +40,10 @@ import static android.Manifest.permission.ACCESS_FINE_LOCATION;
 public class MainActivity extends AppCompatActivity implements DirectionCallback, View.OnClickListener{
     //private Button btnRequestDirection;
     //private GoogleMap googleMap;
+    private final static int REQUEST_CODE_1 = 1;
+    public static String EXTRA_DEVICE_ADDRESS = "device_address";
+
+
     private String serverKey;
     private LatLng origin;
     private LatLng destination;
@@ -163,13 +170,16 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
                 useCurrentAsStartPoint();
             }
         });
+
         SearchBT.setOnClickListener(new View.OnClickListener(){
             public void onClick (View v){
                 Intent in = new Intent(MainActivity.this, DeviceListActivity.class);
-                startActivity(in);
-                //mchat.start();
+                startActivityForResult(in,REQUEST_CODE_1);
+
             }
         });
+
+
         count = 0;
         requestPermission();
         client = LocationServices.getFusedLocationProviderClient(this);
@@ -217,6 +227,24 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         });
 
     }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch(requestCode) {
+            case (REQUEST_CODE_1) : {
+                if (resultCode == Activity.RESULT_OK) {
+                    String MACAdress = data.getStringExtra(EXTRA_DEVICE_ADDRESS);
+                    BluetoothAdapter a=BluetoothAdapter.getDefaultAdapter();
+                    BluetoothDevice device=a.getRemoteDevice(MACAdress);
+                    ConnectThread connect= new ConnectThread(device);
+                    // TODO Update your TextView.
+                }
+                break;
+            }
+        }
+    }
+
 
     public void requestDirection(){
         GoogleDirection.withServerKey(serverKey)
