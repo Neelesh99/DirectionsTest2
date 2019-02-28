@@ -1,38 +1,30 @@
 package com.team14.directionstest2;
 
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.maps.GeoApiContext;
-
-
 import android.bluetooth.BluetoothSocket;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.text.Editable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import com.google.maps.GeoApiContext;
+
 import com.akexorcist.googledirection.DirectionCallback;
 import com.akexorcist.googledirection.GoogleDirection;
 import com.akexorcist.googledirection.constant.TransportMode;
 import com.akexorcist.googledirection.model.Direction;
 import com.akexorcist.googledirection.model.Route;
-
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.model.LatLng;
-
-
-
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.maps.GeoApiContext;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -41,8 +33,6 @@ import java.util.Locale;
 import java.util.Vector;
 
 import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.content.Context.*;
-import static java.lang.Double.valueOf;
 
 public class MainActivity extends AppCompatActivity implements DirectionCallback, View.OnClickListener{
     //private Button btnRequestDirection;
@@ -88,8 +78,10 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     public Vector<Double> Distances;
     public Vector<String> NextStreet;
     public int[] Turn_Index;
-
+    private final BluetoothSocket mmSocket = null;
     private BluetoothComm Comm= new BluetoothComm();
+
+    private BluetoothComm.ConnectedThread Con = Comm.new ConnectedThread(mmSocket);
     //private comm;
 
     @Override
@@ -508,7 +500,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         char[] For_Transmit = Formatter.GoToClock();
         String trans=For_Transmit.toString();
         byte[] transmit=trans.getBytes();
-        BluetoothComm.ConnectedThread.write write = new BluetoothComm.ConnectedThread.write(transmit);
+        Con.write(transmit);
         /** Transmit For_Transmit**/
     }
     public void Navigation_Cycle() throws InterruptedException {
@@ -527,9 +519,9 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         String Direction = Cal.CalcVectors(Turn_No);
         Turn_No++;
         For_Transmit = Formatter.StartNav(street,Distance,Next_Street,Direction);
-        String trans=For_Transmit.toString();
-        byte[] transmit=trans.getBytes();
-        BluetoothComm.ConnectedThread.write(transmit);
+        trans=For_Transmit.toString();
+        transmit=trans.getBytes();
+        Con.write(transmit);
         /** Transmit For_Transmit**/
         boolean arrived = false;
         while(!arrived){
@@ -539,7 +531,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
 
                 trans=For_Transmit.toString();
                 transmit=trans.getBytes();
-                comm.ConnectedThread.write(transmit);
+                Con.write(transmit);
                 /** Transmit For_Transmit**/
 
                 while(!turned){
@@ -558,7 +550,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
 
                 trans=For_Transmit.toString();
                 transmit=trans.getBytes();
-                BluetoothComm.ConnectedThread.write(transmit);
+                Con.write(transmit);
                 /** Transmit For_Transmit**/
             }
             else if(Turn_No != (Next_Street.length()-2)){
@@ -567,14 +559,14 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
                 For_Transmit = Formatter.ReturnToGeneral(street,Distance,Next_Street,Direction);
                 trans=For_Transmit.toString();
                 transmit=trans.getBytes();
-                BluetoothComm.ConnectedThread.write(transmit);
+                Con.write(transmit);
                 /** Transmit For_Transmit**/
             }
             else{
                 For_Transmit = Formatter.ArrivalScreen(street);
                 trans=For_Transmit.toString();
                 transmit=trans.getBytes();
-                BluetoothComm.ConnectedThread.write(transmit);
+                Con.write(transmit);
                 /** Transmit For_Transmit**/
             }
         }
