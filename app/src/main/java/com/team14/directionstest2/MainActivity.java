@@ -85,10 +85,10 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     public Vector<Double> Distances;
     public Vector<String> NextStreet;
     public int[] Turn_Index;
-    private final BluetoothSocket mmSocket = null;
+    private BluetoothSocket mmSocket = null;
     private BluetoothComm Comm= new BluetoothComm();
+    private BluetoothComm.ConnectedThread Con;
 
-    private BluetoothComm.ConnectedThread Con = Comm.new ConnectedThread(mmSocket);
     //private comm;
 
     @Override
@@ -238,7 +238,8 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
                     BluetoothAdapter a=BluetoothAdapter.getDefaultAdapter();
                     BluetoothDevice device=a.getRemoteDevice(MACAdress);
                     ConnectThread connect= new ConnectThread(device);
-                    // TODO Update your TextView.
+                    mmSocket=connect.socket();
+                    Con = Comm.new ConnectedThread(mmSocket);
                 }
                 break;
             }

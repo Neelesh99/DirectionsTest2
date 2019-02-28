@@ -56,6 +56,9 @@ public class ConnectThread extends Thread {
 
     }
 
+    public BluetoothSocket socket(){
+        return mmSocket;
+    }
     // Closes the client socket and causes the thread to finish.
     public void cancel() {
         try {
