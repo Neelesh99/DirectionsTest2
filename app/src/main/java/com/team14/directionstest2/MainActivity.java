@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     public Vector<Double> Distances;
     public Vector<String> NextStreet;
     public int[] Turn_Index;
-    private BluetoothSocket mmSocket = null;
+    private BluetoothSocket mmSocket;
     private BluetoothComm Comm= new BluetoothComm();
     private BluetoothComm.ConnectedThread Con;
 
