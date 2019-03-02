@@ -241,7 +241,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
                     mmSocket=connect.socket();
                     Con = Comm.new ConnectedThread(mmSocket);
                 }
-                break;
+                //break;
             }
         }
     }
