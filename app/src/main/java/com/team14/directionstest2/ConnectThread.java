@@ -21,8 +21,8 @@ public class ConnectThread extends Thread {
         BluetoothSocket tmp = null;
         mmDevice = device;
         ParcelUuid[] uu=device.getUuids();
-        String string=uu.toString();
-        UUID id=UUID.fromString(string);
+        String string=uu[0].toString();
+        UUID id=uu[0].getUuid();
         try {
             // Get a BluetoothSocket to connect with the given BluetoothDevice.
             // MY_UUID is the app's UUID string, also used in the server code.

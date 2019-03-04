@@ -246,7 +246,11 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         }
     }
 
-
+    @Override
+    public void onResume() {
+        //might need to write this function because it is interrupted and can't go back to OnCreate？
+        super.onResume();
+    }
     public void requestDirection(){
         GoogleDirection.withServerKey(serverKey)
                 .from(origin)
@@ -254,6 +258,8 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
                 .transportMode(TransportMode.BICYCLING)
                 .execute(this);
     }
+
+
     @Override
     public void onDirectionSuccess(Direction direction, String rawBody){
         if(direction.isOK()){
