@@ -118,14 +118,16 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         but7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Calculate_Turns();
+
+                /**Calculate_Turns();
                 Calulate_Distance();
                 Clock_Screen();
                 try {
                     Navigation_Cycle();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
+                }**/
+                
             }
         });
         but1.setOnClickListener(new View.OnClickListener() {
@@ -235,6 +237,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
             case (REQUEST_CODE_1) : {
                 if (resultCode == Activity.RESULT_OK) {
                     String MACAdress = data.getStringExtra(EXTRA_DEVICE_ADDRESS);
+
                     BluetoothAdapter a=BluetoothAdapter.getDefaultAdapter();
                     BluetoothDevice device=a.getRemoteDevice(MACAdress);
                     ConnectThread connect= new ConnectThread(device);
