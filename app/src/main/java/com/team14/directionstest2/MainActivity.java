@@ -127,7 +127,10 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }**/
-                
+                String trans="hello";
+                byte[] transmit=trans.getBytes();
+                //Con.write(transmit);
+                Con.write(transmit);
             }
         });
         but1.setOnClickListener(new View.OnClickListener() {
