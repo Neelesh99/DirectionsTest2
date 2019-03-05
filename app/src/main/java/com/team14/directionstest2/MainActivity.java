@@ -544,6 +544,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         String trans=For_Transmit.toString();
         byte[] transmit=trans.getBytes();
         //BluetoothComm.ConnectedThread.write write = new BluetoothComm.ConnectedThread.write(transmit);
+        Con.write(transmit);
         /** Transmit For_Transmit**/
         wait(500);
         String street = CurrentStreet;
