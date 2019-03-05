@@ -79,9 +79,9 @@ public class BluetoothComm {
                 mmOutStream.write(bytes_to_send);
 
                 // Share the sent message with the UI activity.
-                Message writtenMsg = mHandler.obtainMessage(
-                        MessageConstants.MESSAGE_WRITE, -1, -1, mmBuffer);
-                writtenMsg.sendToTarget();
+                //Message writtenMsg = mHandler.obtainMessage(
+                        //MessageConstants.MESSAGE_WRITE, -1, -1, mmBuffer);
+                //writtenMsg.sendToTarget();
             } catch (IOException e) {
                 Log.e(TAG, "Error occurred when sending data", e);
 
