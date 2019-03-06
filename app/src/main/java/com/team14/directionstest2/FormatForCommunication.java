@@ -28,7 +28,7 @@ public class FormatForCommunication {
     }
     public char[] GoToClock(){
         Date currentTime = Calendar.getInstance().getTime();
-        String temp = "cccINSTRcccsssCLKSssseeeNORMeeeN/A";
+        String temp = "cccINSTcccsssCLKSssseeeNORMeeeN/A";
         return temp.toCharArray();
     }
     public char[] RecieveBluetooth(){

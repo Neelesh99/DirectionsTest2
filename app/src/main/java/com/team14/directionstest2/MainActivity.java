@@ -80,11 +80,11 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     boolean CurrentAsOrigin = false;
     boolean End_Of_Instructions = true;
     public FormatForCommunication Formatter = new FormatForCommunication();
-    public Vector<Double> Turn_Lat;
-    public Vector<Double> Turn_Long;
-    public Vector<Double> Distances;
-    public Vector<String> NextStreet;
-    public int[] Turn_Index;
+    public Vector<Double> Turn_Lat = new Vector<>();
+    public Vector<Double> Turn_Long = new Vector<>();
+    public Vector<Double> Distances = new Vector<>();
+    public Vector<String> NextStreet = new Vector<>();
+    public int[] Turn_Index = new int[500];
     private BluetoothSocket mmSocket;
     private BluetoothComm Comm= new BluetoothComm();
     private BluetoothComm.ConnectedThread Con;
@@ -119,18 +119,19 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
             @Override
             public void onClick(View v) {
 
-                /**Calculate_Turns();
-                Calulate_Distance();
+                //Calculate_Turns();
+                //Calulate_Distance();
                 Clock_Screen();
+                /**
                 try {
                     Navigation_Cycle();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }**/
-                String trans="hello";
-                byte[] transmit=trans.getBytes();
+                //String trans="hello";
+                //byte[] transmit=trans.getBytes();
                 //Con.write(transmit);
-                Con.write(transmit);
+                //Con.write(transmit);
             }
         });
         but1.setOnClickListener(new View.OnClickListener() {
@@ -374,9 +375,9 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
                 else{
                     CurrentStreet = col[0];
                 }
-                String[] del = CurrentStreet.split(" ",5);
+                //String[] del = CurrentStreet.split(" ",5);
                 String temp;
-                if(del.length > 3){
+                /*if(del.length > 3){
                     temp = del[2] + " " + del[3];
                 }
                 else if(del.length > 2){
@@ -387,9 +388,9 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
                 }
                 else{
                     temp = del[0];
-                }
-                view4.setText(temp);
-                view5.setText(Currentpremises);
+                }*/
+                //view4.setText(temp);
+                //view5.setText(Currentpremises);
             }
             else{
                 view3.setText("End of Instructions");
@@ -539,7 +540,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     }
     public void Clock_Screen(){
         char[] For_Transmit = Formatter.GoToClock();
-        String trans=For_Transmit.toString();
+        String trans=new String(For_Transmit);
         byte[] transmit=trans.getBytes();
         Con.write(transmit);
         /** Transmit For_Transmit**/
