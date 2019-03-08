@@ -36,19 +36,19 @@ public class FormatForCommunication {
         return temp.toCharArray();
     }
     public char[] StartNav(String StreetName, String Distance, String NextStreet, String Direction){
-        String temp = "cccINSTcccsssSTNVsssN/Addd4/" + StreetName + "/" + Distance + "/" + Direction + "/" + NextStreet + "///";
+        String temp = "cccINSTcccsssSTNVssseeeNORMeeeddd4/" + StreetName + "/" + Distance + "/" + Direction + "/" + NextStreet + "///";
         return temp.toCharArray();
     }
     public char[] SwitchToTurn(String StreetName, String Direction){
-        String temp = "cccINSTcccsssTURNsssN/Addd2/" + Direction + "/" + StreetName + "///";
+        String temp = "cccINSTcccsssTURNssseeeNORMeeeddd2/" + Direction + "/" + StreetName + "///";
         return temp.toCharArray();
     }
     public char[] ReturnToGeneral(String Streetname, String Distance, String NextStreet, String Direction){
-        String temp = "cccINSTcccsssREGEsssN/Addd4/" + Streetname + "/" + Distance + "/" + Direction + "/" + NextStreet + "///";
+        String temp = "cccINSTcccsssREGEssseeeNORMeeeddd4/" + Streetname + "/" + Distance + "/" + Direction + "/" + NextStreet + "///";
         return temp.toCharArray();
     }
     public char[] ArrivalScreen(String Streetname){
-        String temp = "cccINSTcccsssFINIsssN/Addd1/" + Streetname + "///";
+        String temp = "cccINSTcccsssFINIssseeeNORMeeeddd1/" + Streetname + "///";
         return temp.toCharArray();
     }
     public char[] StopNavigation(){

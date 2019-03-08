@@ -89,6 +89,8 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     private BluetoothComm Comm= new BluetoothComm();
     private BluetoothComm.ConnectedThread Con;
 
+
+
     //private comm;
 
     @Override
@@ -118,16 +120,14 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         but7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                //Calculate_Turns();
-                //Calulate_Distance();
                 Clock_Screen();
-                /**
+                Calculate_Turns();
+                Calulate_Distance();
                 try {
                     Navigation_Cycle();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }**/
+                }
                 //String trans="hello";
                 //byte[] transmit=trans.getBytes();
                 //Con.write(transmit);
@@ -545,26 +545,31 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         Con.write(transmit);
         /** Transmit For_Transmit**/
     }
+
     public void Navigation_Cycle() throws InterruptedException {
         int instruction = 0;
         char[] For_Transmit = Formatter.RecieveBluetooth();
-        String trans=For_Transmit.toString();
+        String trans=new String(For_Transmit);
         byte[] transmit=trans.getBytes();
         //BluetoothComm.ConnectedThread.write write = new BluetoothComm.ConnectedThread.write(transmit);
         Con.write(transmit);
+        Delay(50000);
         /** Transmit For_Transmit**/
-        wait(500);
+        //wait(500);
+        Forward();
         String street = CurrentStreet;
         String Distance = Distances.elementAt(instruction).toString();
+        Distance = Distance.substring(0,2);
         String Next_Street = NextStreet.elementAt(instruction);
         CalculateDirections Cal = new CalculateDirections(Latitudes,Longitudes,Turn_Index);
         int Turn_No = 0;
         String Direction = Cal.CalcVectors(Turn_No);
         Turn_No++;
         For_Transmit = Formatter.StartNav(street,Distance,Next_Street,Direction);
-        trans=For_Transmit.toString();
+        trans=new String(For_Transmit);
         transmit=trans.getBytes();
         Con.write(transmit);
+        Delay(50000);
         /** Transmit For_Transmit**/
         boolean arrived = false;
         while(!arrived){
@@ -572,9 +577,10 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
                 boolean turned = false;
                 For_Transmit = Formatter.SwitchToTurn(Next_Street,Direction);
 
-                trans=For_Transmit.toString();
+                trans=new String(For_Transmit);
                 transmit=trans.getBytes();
                 Con.write(transmit);
+                Delay(50000);
                 /** Transmit For_Transmit**/
 
                 while(!turned){
@@ -587,30 +593,36 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
                 CurrentStreet = Next_Street;
                 street = CurrentStreet;
                 Distance = Distances.elementAt(Turn_No).toString();
+                Distance = Distance.substring(0,2);
                 Next_Street = NextStreet.elementAt(Turn_No);
                 Direction = Cal.CalcVectors(Turn_No);
                 For_Transmit = Formatter.ReturnToGeneral(street,Distance,Next_Street,Direction);
 
-                trans=For_Transmit.toString();
+                trans=new String(For_Transmit);
                 transmit=trans.getBytes();
                 Con.write(transmit);
+                Delay(50000);
                 /** Transmit For_Transmit**/
             }
             else if(Turn_No != (Next_Street.length()-2)){
-                wait(1000);
-                Distance = Calculate_Instant_Distance(Turn_No++).toString();
+                //wait(1000);
+                Distance = Calculate_Instant_Distance(Turn_No).toString();
+                Distance = Distance.substring(0,2);
                 For_Transmit = Formatter.ReturnToGeneral(street,Distance,Next_Street,Direction);
-                trans=For_Transmit.toString();
+                trans=new String(For_Transmit);
                 transmit=trans.getBytes();
                 Con.write(transmit);
+                Delay(50000);
                 /** Transmit For_Transmit**/
             }
             else{
                 For_Transmit = Formatter.ArrivalScreen(street);
-                trans=For_Transmit.toString();
+                trans=new String(For_Transmit);
                 transmit=trans.getBytes();
                 Con.write(transmit);
+                Delay(50000);
                 /** Transmit For_Transmit**/
+                arrived = true;
             }
         }
     }
@@ -633,6 +645,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
             }
         }
         count = 0;
+
     }
     public void Calulate_Distance(){
         double R = 6371e3;
@@ -667,5 +680,15 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     public double ToRadians(double in){
         return in*(Math.PI/180);
     }
+    public void Delay(int del){
+        final Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
 
+            }
+
+        }, del);
+        
+    }
 }
