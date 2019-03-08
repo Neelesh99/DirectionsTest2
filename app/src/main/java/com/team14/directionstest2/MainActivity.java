@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     private final static int REQUEST_CODE_1 = 1;
     public static String EXTRA_DEVICE_ADDRESS = "device_address";
 
-
+    boolean arrived;
     private String serverKey;
     private LatLng origin;
     private LatLng destination;
@@ -88,9 +88,13 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     private BluetoothSocket mmSocket;
     private BluetoothComm Comm= new BluetoothComm();
     private BluetoothComm.ConnectedThread Con;
-
-
-
+    int instruction = 0;
+    String Next_Street;
+    String Distance;
+    String Direction;
+    String street;
+    int Turn_No;
+    CalculateDirections Cal;
     //private comm;
 
     @Override
@@ -123,11 +127,8 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
                 Clock_Screen();
                 Calculate_Turns();
                 Calulate_Distance();
-                try {
-                    Navigation_Cycle();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                NavigationCycle(5000);
+
                 //String trans="hello";
                 //byte[] transmit=trans.getBytes();
                 //Con.write(transmit);
@@ -553,7 +554,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         byte[] transmit=trans.getBytes();
         //BluetoothComm.ConnectedThread.write write = new BluetoothComm.ConnectedThread.write(transmit);
         Con.write(transmit);
-        Delay(50000);
+        //Delay(50000);
         /** Transmit For_Transmit**/
         //wait(500);
         Forward();
@@ -569,7 +570,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
         trans=new String(For_Transmit);
         transmit=trans.getBytes();
         Con.write(transmit);
-        Delay(50000);
+        //Delay(50000);
         /** Transmit For_Transmit**/
         boolean arrived = false;
         while(!arrived){
@@ -580,7 +581,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
                 trans=new String(For_Transmit);
                 transmit=trans.getBytes();
                 Con.write(transmit);
-                Delay(50000);
+                //Delay(50000);
                 /** Transmit For_Transmit**/
 
                 while(!turned){
@@ -597,11 +598,10 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
                 Next_Street = NextStreet.elementAt(Turn_No);
                 Direction = Cal.CalcVectors(Turn_No);
                 For_Transmit = Formatter.ReturnToGeneral(street,Distance,Next_Street,Direction);
-
                 trans=new String(For_Transmit);
                 transmit=trans.getBytes();
                 Con.write(transmit);
-                Delay(50000);
+                //Delay(50000);
                 /** Transmit For_Transmit**/
             }
             else if(Turn_No != (Next_Street.length()-2)){
@@ -612,7 +612,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
                 trans=new String(For_Transmit);
                 transmit=trans.getBytes();
                 Con.write(transmit);
-                Delay(50000);
+                //Delay(50000);
                 /** Transmit For_Transmit**/
             }
             else{
@@ -620,7 +620,7 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
                 trans=new String(For_Transmit);
                 transmit=trans.getBytes();
                 Con.write(transmit);
-                Delay(50000);
+                //Delay(50000);
                 /** Transmit For_Transmit**/
                 arrived = true;
             }
@@ -680,15 +680,104 @@ public class MainActivity extends AppCompatActivity implements DirectionCallback
     public double ToRadians(double in){
         return in*(Math.PI/180);
     }
-    public void Delay(int del){
+    public void NavigationCycle(final int del){
         final Handler handler = new Handler();
+        char[] For_Transmit = Formatter.RecieveBluetooth();
+        String trans=new String(For_Transmit);
+        byte[] transmit=trans.getBytes();
+        //BluetoothComm.ConnectedThread.write write = new BluetoothComm.ConnectedThread.write(transmit);
+        Con.write(transmit);
+        final Runnable StartNav = new Runnable() {
+            @Override
+            public void run() {
+                Forward();
+                street = CurrentStreet;
+                Distance = Distances.elementAt(instruction).toString();
+                Distance = Distance.substring(0,2);
+                Next_Street = NextStreet.elementAt(instruction);
+                Cal = new CalculateDirections(Latitudes,Longitudes,Turn_Index);
+                Turn_No = 0;
+                Direction = Cal.CalcVectors(Turn_No);
+                Turn_No++;
+                char[] For_Transmit = Formatter.StartNav(street,Distance,Next_Street,Direction);
+                String trans=new String(For_Transmit);
+                byte[] transmit=trans.getBytes();
+                Con.write(transmit);
+            }
+        };
+        final Runnable AtTurn1 = new Runnable() {
+            @Override
+            public void run() {
+                boolean turned = false;
+                char[] For_Transmit = Formatter.SwitchToTurn(Next_Street,Direction);
+                String trans=new String(For_Transmit);
+                byte[] transmit=trans.getBytes();
+                Con.write(transmit);
+                while(!turned){
+                    double dist = Calculate_Instant_Distance(Turn_No);
+                    if(dist > 10){
+                        turned = true;
+                    }
+                }
+                Turn_No++;
+                CurrentStreet = Next_Street;
+                street = CurrentStreet;
+                Distance = Distances.elementAt(Turn_No).toString();
+                Distance = Distance.substring(0,2);
+                Next_Street = NextStreet.elementAt(Turn_No);
+                Direction = Cal.CalcVectors(Turn_No);
+            }
+        };
+        final Runnable AtTurn2 = new Runnable() {
+            @Override
+            public void run() {
+                char[] For_Transmit = Formatter.ReturnToGeneral(street,Distance,Next_Street,Direction);
+                String trans=new String(For_Transmit);
+                byte[] transmit=trans.getBytes();
+                Con.write(transmit);
+            }
+        };
+        final Runnable Continue = new Runnable() {
+            @Override
+            public void run() {
+                Distance = Calculate_Instant_Distance(Turn_No).toString();
+                Distance = Distance.substring(0,2);
+                char[] For_Transmit = Formatter.ReturnToGeneral(street,Distance,Next_Street,Direction);
+                String trans=new String(For_Transmit);
+                byte[] transmit=trans.getBytes();
+                Con.write(transmit);
+            }
+        };
+        final Runnable Arrived = new Runnable() {
+            @Override
+            public void run() {
+                char[] For_Transmit = Formatter.ArrivalScreen(street);
+                String trans=new String(For_Transmit);
+                byte[] transmit=trans.getBytes();
+                Con.write(transmit);
+                /** Transmit For_Transmit**/
+                arrived = true;
+            }
+        };
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-
+                arrived = false;
+                handler.postDelayed(StartNav,10);
+                while(!arrived){
+                    if(Calculate_Instant_Distance(Turn_No) < 10 && Turn_No != (Next_Street.length()-2)){
+                        handler.postDelayed(AtTurn1,del);
+                        handler.postDelayed(AtTurn2,del);
+                    }
+                    else if(Turn_No != (Next_Street.length()-2)){
+                        handler.postDelayed(Continue,del);
+                    }
+                    else{
+                        handler.postDelayed(Arrived,del);
+                    }
+                }
             }
 
         }, del);
-        
     }
 }
